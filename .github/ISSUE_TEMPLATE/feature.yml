@@ -1,0 +1,27 @@
+name: Proposition d’évolution
+description: Proposer une capacité ou une amélioration de sûreté
+title: "[Évolution] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Besoin
+      description: Décrivez le problème à résoudre et le niveau de menace concerné.
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Effets sur la sûreté
+      description: Précisez les refus, états indéterminés, reprises et preuves attendus.
+    validations:
+      required: true
+  - type: textarea
+    id: qualification
+    attributes:
+      label: Qualification envisagée
+      description: Indiquez les plateformes, matériels sacrifiables, simulations et références normatives nécessaires.
+    validations:
+      required: true

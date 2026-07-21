@@ -1,0 +1,55 @@
+name: Rapport de défaut
+description: Signaler un défaut reproductible sans donnée sensible
+title: "[Défaut] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: N’utilisez pas ce formulaire pour une vulnérabilité. Suivez SECURITY.md et ne joignez aucune donnée client, image de disque, clé, secret ou numéro de série réel.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Sortie exacte de diskpurge --version
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Plateforme
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Plusieurs plateformes
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction minimale
+      description: Utilisez un fichier virtuel ou un support sacrifiable et expurgez les identifiants.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Résultat attendu
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Résultat observé
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Sûreté
+      options:
+        - label: Aucun support contenant des données réelles n’a été utilisé pour cette reproduction.
+          required: true
+        - label: Les journaux et identifiants joints sont synthétiques ou expurgés.
+          required: true

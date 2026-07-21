@@ -1,0 +1,45 @@
+name: ISO graphique
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - VERSION
+      - Makefile
+      - include/**
+      - src/**
+      - ui/**
+      - packaging/live/**
+      - .github/workflows/live-iso.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Tester le cœur et l’interface
+        run: |
+          make -j2
+          make test
+          python3 -m pip install --disable-pip-version-check -r ui/requirements.txt
+          QT_QPA_PLATFORM=offscreen python3 -m unittest ui.test_diskpurge_commands ui.test_datafuckerr_qt -v
+      - name: Construire l’ISO standard dans Debian 13
+        run: |
+          docker run --rm --privileged \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            debian:trixie-slim@sha256:020c0d20b9880058cbe785a9db107156c3c75c2ac944a6aa7ab59f2add76a7bd \
+            sh -lc 'apt-get update && apt-get install -y build-essential live-build && packaging/live/build.sh'
+      - name: Vérifier l’absence du marquage laboratoire
+        run: test "$(./build/diskpurge --version)" = "$(sed -n '1p' VERSION)"
+      - name: Publier l’ISO et son empreinte
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: datafuckerr-live-amd64
+          path: output/iso/*
+          if-no-files-found: error
+          retention-days: 14

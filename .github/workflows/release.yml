@@ -1,0 +1,178 @@
+name: Publication
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publication-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Construire — ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            binary: release-build/diskpurge
+            python: python3
+          - os: macos-15
+            binary: release-build/diskpurge
+            python: python3
+          - os: windows-2025
+            binary: release-build/Release/diskpurge.exe
+            python: python
+    steps:
+      - name: Extraire les sources
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+      - name: Configurer la construction de publication
+        run: cmake -S . -B release-build -DCMAKE_BUILD_TYPE=Release -DDISKPURGE_ENABLE_LAB_MODE=OFF -DDISKPURGE_ENABLE_SANITIZERS=OFF
+      - name: Compiler
+        run: cmake --build release-build --config Release --parallel
+      - name: Tester
+        run: ctest --test-dir release-build -C Release --output-on-failure
+      - name: Préparer l’archive, la nomenclature et les sommes
+        run: >-
+          ${{ matrix.python }} tools/release/package_release.py
+          --binary "${{ matrix.binary }}"
+          --platform "${{ runner.os }}-${{ runner.arch }}"
+          --output-dir release-out
+          --repository "${{ github.repository }}"
+          --source-commit "${{ github.sha }}"
+          --expected-ref "${{ github.ref }}"
+      - name: Vérifier le lot de publication
+        run: ${{ matrix.python }} tools/release/verify_release.py release-out
+      - name: Attester la provenance GitHub
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373
+        with:
+          subject-path: release-out/*
+      - name: Conserver le lot de publication
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: publication-${{ runner.os }}-${{ runner.arch }}
+          path: release-out/*
+          if-no-files-found: error
+          retention-days: 30
+
+  build-iso:
+    name: Construire — ISO Live amd64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Extraire les sources
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Construire l’ISO standard dans Debian 13
+        run: |
+          docker run --rm --privileged \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            debian:trixie-slim@sha256:020c0d20b9880058cbe785a9db107156c3c75c2ac944a6aa7ab59f2add76a7bd \
+            sh -lc 'apt-get update && apt-get install -y build-essential live-build && packaging/live/build.sh'
+      - name: Vérifier l’image et son empreinte
+        shell: bash
+        run: |
+          test "$(./build/diskpurge --version)" = "$(sed -n '1p' VERSION)"
+          cd output/iso
+          sha256sum --check --strict *.iso.sha256
+      - name: Attester la provenance GitHub
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373
+        with:
+          subject-path: output/iso/*
+      - name: Conserver l’image amorçable
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: image-live-amd64
+          path: output/iso/*
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    name: Publier la GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - build
+      - build-iso
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: publication
+    permissions:
+      actions: read
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Extraire les outils de vérification
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 1
+      - name: Télécharger les lots attestés
+        shell: bash
+        run: |
+          gh run download "$GITHUB_RUN_ID" --pattern "publication-*" --dir "$RUNNER_TEMP/downloads"
+          gh run download "$GITHUB_RUN_ID" --name "image-live-amd64" --dir "$RUNNER_TEMP/image-live"
+      - name: Revérifier chaque lot téléchargé
+        shell: bash
+        run: |
+          package_count=0
+          for package_dir in "$RUNNER_TEMP"/downloads/*; do
+            test -d "$package_dir"
+            python3 tools/release/verify_release.py "$package_dir"
+            package_count=$((package_count + 1))
+          done
+          test "$package_count" -eq 3
+      - name: Contrôler et rassembler les fichiers
+        shell: bash
+        run: |
+          mkdir "$RUNNER_TEMP/files"
+          while IFS= read -r -d '' source; do
+            filename="$(basename "$source")"
+            if [[ -e "$RUNNER_TEMP/files/$filename" ]]; then
+              echo "Nom de fichier dupliqué : $filename" >&2
+              exit 1
+            fi
+            cp "$source" "$RUNNER_TEMP/files/$filename"
+          done < <(find "$RUNNER_TEMP/downloads" -type f -print0)
+          while IFS= read -r -d '' source; do
+            filename="$(basename "$source")"
+            if [[ -e "$RUNNER_TEMP/files/$filename" ]]; then
+              echo "Nom de fichier dupliqué : $filename" >&2
+              exit 1
+            fi
+            cp "$source" "$RUNNER_TEMP/files/$filename"
+          done < <(find "$RUNNER_TEMP/image-live" -type f -print0)
+          test "$(find "$RUNNER_TEMP/files" -type f | wc -l)" -eq 11
+          cd "$RUNNER_TEMP/files"
+          sha256sum --check --strict diskpurge-*.sha256
+          sha256sum --check --strict datafuckerr-live-*.iso.sha256
+      - name: Créer ou compléter la publication
+        shell: bash
+        run: |
+          tag="$GITHUB_REF_NAME"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            options=(release create "$tag" --verify-tag --title "datafuckerr $tag" --generate-notes)
+            if [[ "$tag" == v0.* || "$tag" == *-* ]]; then
+              options+=(--prerelease)
+            fi
+            gh "${options[@]}"
+          fi
+          gh release upload "$tag" "$RUNNER_TEMP"/files/* --clobber
