@@ -46,7 +46,8 @@ static void expect_result(dfx_job job, bool accepted, const char *diagnostic, co
 }
 
 int main(void) {
-    const char invalid_utf8[] = {(char)0xc3, (char)0x28, '\0'};
+    const unsigned char invalid_utf8_bytes[] = {0xc3U, 0x28U, 0U};
+    const char *invalid_utf8 = (const char *)invalid_utf8_bytes;
     expect(dfx_text_is_safe("Opérateur été"), "UTF-8 valide accepté");
     expect(!dfx_text_is_safe("ligne\nseconde"), "caractère de contrôle refusé");
     expect(!dfx_text_is_safe(invalid_utf8), "UTF-8 invalide refusé");

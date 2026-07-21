@@ -142,12 +142,13 @@ int main(void) {
     expect_canonical_rejection(&refused, "duplique", ",\"détail\":", ",\"statut\":\"refusé\",\"détail\":", "clé dupliquée refusée malgré une chaîne recalculée", error);
     expect_canonical_rejection(&refused, "scalaire", "\"taille\":8193", "\"taille\":x", "scalaire non numérique refusé malgré une chaîne recalculée", error);
     expect_canonical_rejection(&refused, "inattendu", ",\"détail\":", ",\"champ_inattendu\":1,\"détail\":", "champ inattendu refusé malgré une chaîne recalculée", error);
-    const char invalid_utf8[] = {(char)0xc3, (char)0x28, '\0'};
+    const unsigned char invalid_utf8_bytes[] = {0xc3U, 0x28U, 0U};
+    const char *invalid_utf8 = (const char *)invalid_utf8_bytes;
     expect_canonical_rejection(&refused, "utf8", "Confirmation invalide", invalid_utf8, "UTF-8 invalide refusé malgré une chaîne recalculée", error);
 
     dfx_job invalid_text = make_job();
     prepare_path(&invalid_text, "utf8-producteur", error);
-    memcpy(invalid_text.operator_id, invalid_utf8, sizeof(invalid_utf8));
+    memcpy(invalid_text.operator_id, invalid_utf8, sizeof(invalid_utf8_bytes));
     expect(dfx_write_audit(&invalid_text, "en_cours", "Début", error) != 0 && strstr(error, "UTF-8 invalide") != NULL, "producteur refuse un texte UTF-8 invalide avant écriture");
     dfx_job invalid_control = make_job();
     prepare_path(&invalid_control, "controle-producteur", error);
