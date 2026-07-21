@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+xset s off
+xset -dpms
+openbox &
+exec python3 /opt/datafuckerr/ui/datafuckerr_qt.py /opt/datafuckerr/diskpurge

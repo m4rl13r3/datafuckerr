@@ -1,0 +1,18 @@
+[Unit]
+Description=Interface graphique datafuckerr
+After=systemd-user-sessions.service
+Conflicts=getty@tty1.service
+Before=graphical.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/xinit /usr/local/bin/datafuckerr-session -- :0 vt1 -nolisten tcp
+Restart=on-failure
+RestartSec=2
+StandardInput=tty
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+
+[Install]
+WantedBy=graphical.target

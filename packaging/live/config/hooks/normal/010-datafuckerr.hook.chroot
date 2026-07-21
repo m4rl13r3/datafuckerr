@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+chmod 0755 /usr/local/bin/datafuckerr-session
+chmod 0755 /opt/datafuckerr/diskpurge
+chmod 0755 /opt/datafuckerr/ui/datafuckerr_qt.py
+systemctl enable datafuckerr-gui.service
+systemctl set-default graphical.target

@@ -1,0 +1,17 @@
+linux-image-amd64
+live-boot
+live-config
+systemd-sysv
+xserver-xorg
+xinit
+x11-xserver-utils
+openbox
+python3
+python3-pyside6.qtwidgets
+fonts-inter
+fonts-dejavu-core
+util-linux
+udisks2
+nvme-cli
+smartmontools
+ca-certificates
