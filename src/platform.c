@@ -182,7 +182,7 @@ int dfx_inspect_device(const char *path, dfx_device *device, char error[DFX_ERRO
     }
     DISK_GEOMETRY_EX geometry;
     DWORD returned = 0;
-    if (DeviceIoControl(handle, IOCTL_DISK_GET_DRIVE_GEOMETRY_EX, NULL, 0, &geometry, sizeof(geometry), &returned, NULL)) {
+    if (DeviceIoControl(handle, IOCTL_DISK_GET_DRIVE_GEOMETRY_EX, NULL, 0, &geometry, (DWORD)sizeof(geometry), &returned, NULL)) {
         if (geometry.DiskSize.QuadPart < 0 || geometry.Geometry.BytesPerSector == 0) {
             CloseHandle(handle);
             snprintf(error, DFX_ERROR_MAX, "Géométrie du disque invalide.");
@@ -200,7 +200,7 @@ int dfx_inspect_device(const char *path, dfx_device *device, char error[DFX_ERRO
         property_query.PropertyId = StorageDeviceProperty;
         property_query.QueryType = PropertyStandardQuery;
         DWORD property_returned = 0;
-        if (DeviceIoControl(handle, IOCTL_STORAGE_QUERY_PROPERTY, &property_query, sizeof(property_query), property_buffer, sizeof(property_buffer), &property_returned, NULL) && property_returned >= offsetof(STORAGE_DEVICE_DESCRIPTOR, RawDeviceProperties)) {
+        if (DeviceIoControl(handle, IOCTL_STORAGE_QUERY_PROPERTY, &property_query, (DWORD)sizeof(property_query), property_buffer, (DWORD)sizeof(property_buffer), &property_returned, NULL) && property_returned >= offsetof(STORAGE_DEVICE_DESCRIPTOR, RawDeviceProperties)) {
             STORAGE_DEVICE_DESCRIPTOR *descriptor = (STORAGE_DEVICE_DESCRIPTOR *)property_buffer;
             if (!storage_text(property_buffer, property_returned, descriptor->ProductIdOffset, device->model, sizeof(device->model))) snprintf(device->model, sizeof(device->model), "Non déterminé");
             if (!storage_text(property_buffer, property_returned, descriptor->ProductRevisionOffset, device->firmware, sizeof(device->firmware))) snprintf(device->firmware, sizeof(device->firmware), "Non déterminé");
@@ -225,11 +225,11 @@ int dfx_inspect_device(const char *path, dfx_device *device, char error[DFX_ERRO
             seek_query.QueryType = PropertyStandardQuery;
             DEVICE_SEEK_PENALTY_DESCRIPTOR seek_penalty;
             DWORD seek_returned = 0;
-            if (DeviceIoControl(handle, IOCTL_STORAGE_QUERY_PROPERTY, &seek_query, sizeof(seek_query), &seek_penalty, sizeof(seek_penalty), &seek_returned, NULL)) device->kind = seek_penalty.IncursSeekPenalty ? DFX_MEDIA_HDD : DFX_MEDIA_SSD;
+            if (DeviceIoControl(handle, IOCTL_STORAGE_QUERY_PROPERTY, &seek_query, (DWORD)sizeof(seek_query), &seek_penalty, (DWORD)sizeof(seek_penalty), &seek_returned, NULL)) device->kind = seek_penalty.IncursSeekPenalty ? DFX_MEDIA_HDD : DFX_MEDIA_SSD;
         }
         STORAGE_DEVICE_NUMBER number;
         DWORD number_returned = 0;
-        if (DeviceIoControl(handle, IOCTL_STORAGE_GET_DEVICE_NUMBER, NULL, 0, &number, sizeof(number), &number_returned, NULL)) {
+        if (DeviceIoControl(handle, IOCTL_STORAGE_GET_DEVICE_NUMBER, NULL, 0, &number, (DWORD)sizeof(number), &number_returned, NULL)) {
             device->whole_device = number.DeviceType == FILE_DEVICE_DISK && number.PartitionNumber == (DWORD)-1;
             device->system_disk = device->whole_device && number.DeviceNumber == 0;
             device->object_identity_a = number.DeviceNumber;

@@ -60,7 +60,7 @@ static FILE *open_audit(dfx_job *job, char error[DFX_ERROR_MAX]) {
         return NULL;
     }
     FILE_ATTRIBUTE_TAG_INFO tag_information;
-    if (!GetFileInformationByHandleEx(audit_handle, FileAttributeTagInfo, &tag_information, sizeof(tag_information)) || (tag_information.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0) {
+    if (!GetFileInformationByHandleEx(audit_handle, FileAttributeTagInfo, &tag_information, (DWORD)sizeof(tag_information)) || (tag_information.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0) {
         CloseHandle(audit_handle);
         snprintf(error, DFX_ERROR_MAX, "Refus : le journal d’audit ne doit pas être un point de réanalyse.");
         return NULL;
@@ -894,7 +894,7 @@ int dfx_verify_audit_file(const char *path, FILE *out, char error[DFX_ERROR_MAX]
     }
     FILE_ATTRIBUTE_TAG_INFO tag_information;
     BY_HANDLE_FILE_INFORMATION audit_information;
-    if (GetFileType(audit_handle) != FILE_TYPE_DISK || !GetFileInformationByHandle(audit_handle, &audit_information) || audit_information.nNumberOfLinks != 1U || !GetFileInformationByHandleEx(audit_handle, FileAttributeTagInfo, &tag_information, sizeof(tag_information)) || (tag_information.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0) {
+    if (GetFileType(audit_handle) != FILE_TYPE_DISK || !GetFileInformationByHandle(audit_handle, &audit_information) || audit_information.nNumberOfLinks != 1U || !GetFileInformationByHandleEx(audit_handle, FileAttributeTagInfo, &tag_information, (DWORD)sizeof(tag_information)) || (tag_information.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0) {
         CloseHandle(audit_handle);
         snprintf(error, DFX_ERROR_MAX, "Refus : le journal d’audit doit être un fichier régulier sans alias de chemin.");
         return -1;
