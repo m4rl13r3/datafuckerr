@@ -66,7 +66,23 @@ jobs:
               exit $status
           }
       - name: Tester avec CTest
+        if: runner.os != 'Windows'
         run: ctest --test-dir cmake-build -C Release --output-on-failure
+      - name: Tester avec CTest sous Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $output = & ctest --test-dir cmake-build -C Release --output-on-failure 2>&1
+          $status = $LASTEXITCODE
+          $output | ForEach-Object { Write-Output $_ }
+          if ($status -ne 0) {
+              $failureOutput = $output | Select-Object -Last 50
+              foreach ($line in $failureOutput) {
+                  $escaped = $line.ToString().Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+                  Write-Output "::error::$escaped"
+              }
+              exit $status
+          }
       - name: Vérifier le Makefile
         if: runner.os != 'Windows'
         run: make clean && make -j2 && make test
