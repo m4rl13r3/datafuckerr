@@ -48,7 +48,23 @@ jobs:
       - name: Configurer CMake
         run: cmake -S . -B cmake-build -DCMAKE_BUILD_TYPE=Release
       - name: Compiler avec CMake
+        if: runner.os != 'Windows'
         run: cmake --build cmake-build --config Release --parallel
+      - name: Compiler avec CMake sous Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $output = & cmake --build cmake-build --config Release --parallel 2>&1
+          $status = $LASTEXITCODE
+          $output | ForEach-Object { Write-Output $_ }
+          if ($status -ne 0) {
+              $diagnostics = $output | Where-Object { $_ -match 'fatal error|error C[0-9]+|error LNK[0-9]+' } | Select-Object -First 20
+              foreach ($diagnostic in $diagnostics) {
+                  $escaped = $diagnostic.ToString().Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+                  Write-Output "::error::$escaped"
+              }
+              exit $status
+          }
       - name: Tester avec CTest
         run: ctest --test-dir cmake-build -C Release --output-on-failure
       - name: Vérifier le Makefile
