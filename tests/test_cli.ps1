@@ -86,7 +86,7 @@ try {
     Assert-True ($LASTEXITCODE -eq 0) "L’effacement virtuel a échoué."
 
     $result = [System.IO.File]::ReadAllBytes($image)
-    Assert-True (($result | Where-Object { $_ -ne 0 }).Count -eq 0) "Le fichier virtuel contient encore des octets non nuls."
+    Assert-True (@($result | Where-Object { $_ -ne 0 }).Count -eq 0) "Le fichier virtuel contient encore des octets non nuls."
     $auditContent = [System.IO.File]::ReadAllText($audit, [System.Text.Encoding]::UTF8)
     Assert-True ($auditContent.Contains('"statut":"réussi"')) "Le journal d’audit ne contient pas le succès attendu."
     Assert-True ($auditContent -match '"opération":"[0-9a-f]{64}"') "L’identifiant d’opération est absent du journal."
@@ -148,7 +148,7 @@ try {
     $nonAlignedIdentifier = (($nonAlignedInspection -split "`r?`n" | Where-Object { $_ -match '^Identifiant\s+:' } | Select-Object -First 1) -replace '^Identifiant\s+:\s*', '').Trim()
     & $Binary erase $nonAlignedImage --confirm $nonAlignedIdentifier --verify full *> $null
     Assert-True ($LASTEXITCODE -eq 0) "L’effacement d’une taille non alignée a échoué."
-    Assert-True (([System.IO.File]::ReadAllBytes($nonAlignedImage) | Where-Object { $_ -ne 0 }).Count -eq 0) "La taille non alignée contient encore des données."
+    Assert-True (@([System.IO.File]::ReadAllBytes($nonAlignedImage) | Where-Object { $_ -ne 0 }).Count -eq 0) "La taille non alignée contient encore des données."
 
     [System.IO.File]::WriteAllBytes($emptyImage, [byte[]]::new(0))
     $emptyInspection = & $Binary inspect $emptyImage 2>&1 | Out-String
