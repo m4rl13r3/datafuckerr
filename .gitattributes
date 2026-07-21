@@ -4,3 +4,4 @@
 *.pdf binary
 *.png binary
 *.zip binary
+packaging/native/licenses/*.txt text eol=lf
