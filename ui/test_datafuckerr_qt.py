@@ -1,10 +1,12 @@
 import os
+import sys
 import time
 import unittest
+from unittest import mock
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtWidgets import QApplication, QMessageBox
+from PySide6.QtWidgets import QApplication, QFileDialog, QMessageBox
 
 from ui.datafuckerr_qt import DatafuckerrWindow, build_stylesheet
 
@@ -138,6 +140,24 @@ class TestDatafuckerrWindow(unittest.TestCase):
         self.assertIsNone(self.window.process)
         self.assertTrue(self.window.detect_button.isEnabled())
         self.assertFalse(self.window.prepare_button.isEnabled())
+
+    def test_frozen_report_uses_embedded_entry_point(self):
+        self.window.run_command = mock.Mock()
+        with (
+            mock.patch.object(
+                QFileDialog,
+                "getSaveFileName",
+                return_value=("/tmp/rapport.pdf", ""),
+            ),
+            mock.patch.object(sys, "frozen", True, create=True),
+        ):
+            self.window._after_report_precheck(
+                "/tmp/diskpurge", "/tmp/audit.jsonl", 0, "", None
+            )
+        command = self.window.run_command.call_args.args[0]
+        self.assertEqual(command[:2], [sys.executable, "--generate-report"])
+        self.assertIn("/tmp/audit.jsonl", command)
+        self.assertIn("/tmp/diskpurge", command)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,27 @@ Toutes les modifications notables de diskpurge sont consignées dans ce fichier.
 
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le projet entend suivre [Semantic Versioning](https://semver.org/lang/fr/) à partir de sa première préversion publiée.
 
+## 0.2.1 — 2026-07-21
+
+### Ajouté
+
+- Application autonome Linux x64 distribuée au format AppImage.
+- Application autonome macOS Apple Silicon distribuée dans une image DMG.
+- Application autonome Windows x64 distribuée avec un installateur Inno Setup.
+- Intégration du moteur C standard, de Qt, de Python et du générateur PDF dans chaque application native.
+- Smoke test exécuté sur chaque application construite avant publication.
+- Somme SHA-256 et attestation de provenance GitHub pour chaque paquet natif.
+
+### Modifié
+
+- La publication contient désormais dix-sept fichiers, dont les trois applications autonomes et leurs sommes.
+- La résolution du moteur et la génération de rapports prennent en charge une exécution PyInstaller gelée.
+
+### Limites connues
+
+- Les applications macOS et Windows ne sont ni signées par un certificat développeur ni notarisées ; les avertissements du système restent donc attendus.
+- Les paquets autonomes ne constituent aucune qualification matérielle et conservent le refus des périphériques physiques de la version standard.
+
 ## 0.2.0 — 2026-07-21
 
 ### Ajouté

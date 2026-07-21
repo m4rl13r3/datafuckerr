@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import argparse
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
 
 from PySide6.QtCore import QProcess, Qt
-from PySide6.QtGui import QFontDatabase, QKeySequence, QShortcut, QTextCursor
+from PySide6.QtGui import QFontDatabase, QIcon, QKeySequence, QShortcut, QTextCursor
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -32,6 +33,7 @@ try:
     from .diskpurge_commands import (
         METHODS,
         VERIFICATIONS,
+        application_root,
         assert_safe_command,
         build_erase_command,
         build_inspect_command,
@@ -51,6 +53,7 @@ except ImportError:
     from diskpurge_commands import (
         METHODS,
         VERIFICATIONS,
+        application_root,
         assert_safe_command,
         build_erase_command,
         build_inspect_command,
@@ -86,6 +89,13 @@ def make_label(text, role="body", wrap=False):
     label.setProperty("role", role)
     label.setWordWrap(wrap)
     return label
+
+
+def application_resource(name):
+    bundled = application_root() / name
+    if bundled.is_file():
+        return bundled
+    return Path(__file__).resolve().parent.parent / "packaging" / "native" / name
 
 
 class Card(QFrame):
@@ -1250,21 +1260,32 @@ class DatafuckerrWindow(QMainWindow):
         if not destination:
             self.audit_pill.set_content("GÉNÉRATION ANNULÉE", "neutral")
             return
-        script = (
-            Path(__file__).resolve().parent.parent
-            / "tools"
-            / "report"
-            / "generate_report.py"
-        )
-        command = [
-            sys.executable,
-            str(script),
-            audit,
-            "--diskpurge",
-            binary,
-            "--output",
-            destination,
-        ]
+        if getattr(sys, "frozen", False):
+            command = [
+                sys.executable,
+                "--generate-report",
+                audit,
+                "--diskpurge",
+                binary,
+                "--output",
+                destination,
+            ]
+        else:
+            script = (
+                Path(__file__).resolve().parent.parent
+                / "tools"
+                / "report"
+                / "generate_report.py"
+            )
+            command = [
+                sys.executable,
+                str(script),
+                audit,
+                "--diskpurge",
+                binary,
+                "--output",
+                destination,
+            ]
         self.audit_pill.set_content("GÉNÉRATION PDF", "blue")
         self.run_command(
             command,
@@ -1467,12 +1488,61 @@ def build_parser():
     return parser
 
 
+def native_smoke_test():
+    version = (application_root() / "VERSION").read_text(encoding="utf-8").strip()
+    binary = Path(default_binary_path())
+    if not binary.is_file():
+        print("Erreur : le moteur diskpurge embarqué est absent.", file=sys.stderr)
+        return 2
+    result = subprocess.run(
+        (str(binary), "--version"),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=10,
+        check=False,
+        shell=False,
+    )
+    if result.returncode != 0 or result.stdout.strip() != version:
+        print(
+            "Erreur : le moteur embarqué ne correspond pas à l’application.",
+            file=sys.stderr,
+        )
+        return 2
+    from reportlab.platypus import SimpleDocTemplate
+
+    if SimpleDocTemplate is None:
+        return 2
+    application = QApplication.instance() or QApplication(sys.argv[:1])
+    window = DatafuckerrWindow(str(binary))
+    window.close()
+    application.processEvents()
+    print(f"Application native datafuckerr {version} vérifiée.")
+    return 0
+
+
 def main(argv=None):
-    args = build_parser().parse_args(argv)
+    arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments[:1] == ["--generate-report"]:
+        from tools.report.generate_report import main as report_main
+
+        return report_main(arguments[1:])
+    if arguments == ["--native-smoke-test"]:
+        return native_smoke_test()
+    args = build_parser().parse_args(arguments)
     application = QApplication(sys.argv[:1])
     application.setApplicationName("datafuckerr")
     application.setApplicationDisplayName("datafuckerr — Centre de sanitisation")
     application.setOrganizationName("datafuckerr")
+    version_path = application_root() / "VERSION"
+    if version_path.is_file():
+        application.setApplicationVersion(
+            version_path.read_text(encoding="utf-8").strip()
+        )
+    icon_path = application_resource("datafuckerr.svg")
+    if icon_path.is_file():
+        application.setWindowIcon(QIcon(str(icon_path)))
     application.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.GeneralFont))
     window = DatafuckerrWindow(args.binary)
     window.show()

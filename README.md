@@ -2,7 +2,7 @@
 
 Suite open source d’effacement de supports de stockage. Son moteur C17 `diskpurge` fournit l’inventaire, la planification et l’exécution ; l’interface Qt 6 `datafuckerr` l’expose sur les plateformes prises en charge.
 
-> **Statut : prépublication alpha 0.2.0.** Cette version est destinée aux fichiers virtuels, aux démonstrations et au développement. N’utilisez pas `diskpurge` sur un support réel ou sur des données client avant d’avoir satisfait les critères de qualification matérielle et de publication du projet.
+> **Statut : prépublication alpha 0.2.1.** Cette version est destinée aux fichiers virtuels, aux démonstrations et au développement. N’utilisez pas `diskpurge` sur un support réel ou sur des données client avant d’avoir satisfait les critères de qualification matérielle et de publication du projet.
 
 ## Portée actuelle
 
@@ -16,7 +16,7 @@ Suite open source d’effacement de supports de stockage. Son moteur C17 `diskpu
 
 Sous Linux, le backend NVMe direct lit les capacités du contrôleur, privilégie le crypto-erase, utilise sinon le block-erase, puis suit le journal Sanitize. Cette implémentation n’est pas encore qualifiée sur une matrice de matériels sacrifiables.
 
-Le binaire standard 0.2.0 ne contient aucun tuple matériel réel qualifié : il refuse donc actuellement tout `erase` visant un disque physique. Les fichiers réguliers de test sont les seules cibles qualifiées par la table distribuée. Un build de laboratoire est marqué par le suffixe de version `-lab` et reste réservé aux supports sacrifiables isolés ; il n’est pas un binaire de production.
+Le binaire standard 0.2.1 ne contient aucun tuple matériel réel qualifié : il refuse donc actuellement tout `erase` visant un disque physique. Les fichiers réguliers de test sont les seules cibles qualifiées par la table distribuée. Un build de laboratoire est marqué par le suffixe de version `-lab` et reste réservé aux supports sacrifiables isolés ; il n’est pas un binaire de production.
 
 Le type de connecteur — USB, USB-C, SATA ou PCIe — ne garantit pas la disponibilité d’une méthode. Un pont USB peut filtrer les commandes natives, modifier l’identité exposée ou masquer les capacités du support.
 
@@ -26,13 +26,17 @@ datafuckerr fournit une interface Qt 6 moderne qui pilote exclusivement le cœur
 
 | Système | Niveau annoncé pour l’interface |
 | --- | --- |
-| Linux maintenu | Cible principale avec Qt 6, Python 3.10+ et un binaire construit pour la distribution. |
-| macOS 13 à 26 | Cible principale sur Intel ou Apple Silicon avec le binaire C correspondant. |
+| Linux x64 maintenu | AppImage autonome contenant Qt, Python et le moteur C standard. |
+| macOS 13 à 26 sur Apple Silicon | Application autonome distribuée dans un DMG. |
 | macOS 12 et antérieurs | Non pris en charge par la dépendance graphique distribuée. |
-| Windows 10 et 11 | Cible principale avec Python 3.10+, PySide6 et le binaire C Windows. |
+| Windows 10 et 11 x64 | Application autonome distribuée avec un installateur. |
 | Windows XP, 7 et 8 | Non pris en charge ; utiliser le média amorçable sur un matériel compatible. |
 
 Les anciens Windows ne disposent plus d’une base système maintenue adaptée à un outil destructif. Leur promettre un effacement client sûr serait trompeur ; le média amorçable est la voie prévue pour les machines qui ne peuvent pas exécuter une plateforme maintenue.
+
+Les paquets autonomes ne requièrent aucune installation préalable de Python ou de PySide6. Le DMG macOS et l’installateur Windows de cette alpha ne sont pas signés par un certificat développeur et ne sont pas notarisés. Les attestations de provenance et les sommes publiées permettent de vérifier la construction, mais elles ne suppriment pas les avertissements de sécurité des systèmes.
+
+Après téléchargement, vérifiez le fichier `.sha256` correspondant. L’AppImage doit ensuite être rendue exécutable, le DMG permet de glisser `datafuckerr.app` dans Applications et l’exécutable Windows installe l’application pour l’utilisateur courant. Il ne faut pas désactiver globalement Gatekeeper, SmartScreen ou l’antivirus pour contourner un avertissement.
 
 Le [générateur de rapport](docs/CLIENT_REPORT.md) transforme un journal accepté par `verify-audit` en PDF lisible. Chaque page porte la mention **RAPPORT TECHNIQUE NON CERTIFIÉ** : le document constitue une trace locale d’exécution, jamais un certificat de non-récupérabilité.
 

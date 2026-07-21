@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=datafuckerr
+GenericName=Effacement contrôlé de supports
+Comment=Interface professionnelle de sanitisation contrôlée
+Exec=datafuckerr
+Icon=datafuckerr
+Terminal=false
+Categories=System;Utility;
+Keywords=disque;effacement;sanitisation;audit;

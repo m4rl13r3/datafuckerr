@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -172,8 +173,15 @@ def plan_is_executable(output):
     return False
 
 
+def application_root():
+    bundled_root = getattr(sys, "_MEIPASS", "")
+    if bundled_root:
+        return Path(bundled_root).resolve()
+    return Path(__file__).resolve().parent.parent
+
+
 def default_binary_path():
-    root = Path(__file__).resolve().parent.parent
+    root = application_root()
     names = []
     if os.name == "nt":
         names.extend(

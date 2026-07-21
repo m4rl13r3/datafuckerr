@@ -1,6 +1,8 @@
 import os
 import subprocess
+import tempfile
 import unittest
+from pathlib import Path
 from unittest import mock
 
 from ui.diskpurge_commands import (
@@ -11,6 +13,7 @@ from ui.diskpurge_commands import (
     build_plan_command,
     build_verify_audit_command,
     execute_command,
+    default_binary_path,
     inspection_signature,
     parse_inspection,
     plan_is_executable,
@@ -18,6 +21,16 @@ from ui.diskpurge_commands import (
 
 
 class CommandConstructionTests(unittest.TestCase):
+    def test_frozen_application_uses_bundled_binary(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            binary_name = "diskpurge.exe" if os.name == "nt" else "diskpurge"
+            binary = Path(temporary) / binary_name
+            binary.touch()
+            with mock.patch(
+                "ui.diskpurge_commands.sys._MEIPASS", temporary, create=True
+            ):
+                self.assertEqual(default_binary_path(), str(binary.resolve()))
+
     def test_list_command(self):
         self.assertEqual(
             build_list_command("/opt/disk purge"), ["/opt/disk purge", "list"]
