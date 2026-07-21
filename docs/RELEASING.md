@@ -63,10 +63,10 @@ python3 tools/release/verify_release.py dist
 La somme protège contre une erreur de transport seulement si le fichier de sommes provient d’un canal authentifié. L’attestation GitHub lie l’artefact au workflow et au commit par une identité OIDC ; elle doit être vérifiée en plus de la somme.
 
 ~~~sh
-sha256sum --check diskpurge-0.2.1-linux-x64.sha256
-sha256sum --check datafuckerr-0.2.1-linux-x64.AppImage.sha256
-gh attestation verify diskpurge-0.2.1-linux-x64.tar.gz --repo propriétaire/diskpurge
-gh attestation verify datafuckerr-0.2.1-linux-x64.AppImage --repo propriétaire/diskpurge
+sha256sum --check diskpurge-0.2.2-linux-x64.sha256
+sha256sum --check datafuckerr-0.2.2-linux-x64.AppImage.sha256
+gh attestation verify diskpurge-0.2.2-linux-x64.tar.gz --repo propriétaire/diskpurge
+gh attestation verify datafuckerr-0.2.2-linux-x64.AppImage --repo propriétaire/diskpurge
 ~~~
 
 Sur macOS, remplacer `sha256sum` par `shasum -a 256` et comparer les deux lignes. Sous Windows, utiliser `Get-FileHash -Algorithm SHA256`.

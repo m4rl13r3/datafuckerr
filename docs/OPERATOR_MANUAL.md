@@ -2,7 +2,7 @@
 
 ## Décision d’emploi
 
-diskpurge 0.2.1 est une alpha destinée aux fichiers virtuels et au développement. Le binaire standard ne contient actuellement aucun tuple matériel réel qualifié. Il refuse donc l’effacement de tout disque physique, même si les autres contrôles sont satisfaits.
+diskpurge 0.2.2 est une alpha destinée aux fichiers virtuels et au développement. Le binaire standard ne contient actuellement aucun tuple matériel réel qualifié. Il refuse donc l’effacement de tout disque physique, même si les autres contrôles sont satisfaits.
 
 Cette restriction est une barrière de sûreté volontaire. Ne l’interprétez pas comme une erreur à contourner et n’utilisez pas cette version sur un support client.
 

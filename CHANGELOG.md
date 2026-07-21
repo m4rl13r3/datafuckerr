@@ -4,6 +4,13 @@ Toutes les modifications notables de diskpurge sont consignées dans ce fichier.
 
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le projet entend suivre [Semantic Versioning](https://semver.org/lang/fr/) à partir de sa première préversion publiée.
 
+## 0.2.2 — 2026-07-21
+
+### Corrigé
+
+- La compilation Ubuntu 22.04 de Publication est limitée à deux tâches parallèles afin d’éviter l’échec du runner avant la construction de l’AppImage.
+- La CI reproduit désormais la compilation et les tests Linux complets du workflow de Publication avant la création d’un tag.
+
 ## 0.2.1 — 2026-07-21
 
 ### Ajouté

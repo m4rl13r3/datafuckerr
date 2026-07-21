@@ -51,7 +51,7 @@ jobs:
       - name: Configurer la construction de publication
         run: cmake -S . -B release-build -DCMAKE_BUILD_TYPE=Release -DDISKPURGE_ENABLE_LAB_MODE=OFF -DDISKPURGE_ENABLE_SANITIZERS=OFF
       - name: Compiler
-        run: cmake --build release-build --config Release --parallel
+        run: cmake --build release-build --config Release --parallel 2
       - name: Tester
         run: ctest --test-dir release-build -C Release --output-on-failure
       - name: Préparer l’archive, la nomenclature et les sommes

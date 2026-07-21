@@ -25,9 +25,9 @@ Le cœur C effectue encore sa propre réinspection et reste seul responsable de 
 
 Les applications autonomes s’utilisent sans environnement Python séparé :
 
-- sous Linux x64, rendre `datafuckerr-0.2.1-linux-x64.AppImage` exécutable puis l’ouvrir ;
+- sous Linux x64, rendre `datafuckerr-0.2.2-linux-x64.AppImage` exécutable puis l’ouvrir ;
 - sous macOS Apple Silicon, ouvrir le DMG et déplacer `datafuckerr.app` vers Applications ;
-- sous Windows x64, exécuter `datafuckerr-0.2.1-windows-x64-setup.exe`.
+- sous Windows x64, exécuter `datafuckerr-0.2.2-windows-x64-setup.exe`.
 
 Cette alpha n’a pas encore de certificat de signature Apple ou Microsoft. Vérifiez d’abord la somme SHA-256 et l’attestation de provenance depuis la page de prépublication. Ne désactivez pas globalement les protections du système pour lancer l’application.
 
