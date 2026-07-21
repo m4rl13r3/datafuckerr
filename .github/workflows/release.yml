@@ -37,7 +37,7 @@ jobs:
             python: python
     steps:
       - name: Extraire les sources
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
       - name: Installer Python 3.12
@@ -137,7 +137,7 @@ jobs:
       attestations: write
     steps:
       - name: Extraire les sources
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Construire l’ISO standard dans Debian 13
         run: |
           docker run --rm --privileged \
@@ -180,7 +180,7 @@ jobs:
       GH_REPO: ${{ github.repository }}
     steps:
       - name: Extraire les outils de vérification
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 1
       - name: Télécharger les lots attestés
