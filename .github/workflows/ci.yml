@@ -118,7 +118,7 @@ jobs:
       - name: Construire le moteur standard
         run: |
           cmake -S . -B native-cmake -DCMAKE_BUILD_TYPE=Release -DDISKPURGE_ENABLE_LAB_MODE=OFF
-          cmake --build native-cmake --config Release --parallel
+          cmake --build native-cmake --config Release --target diskpurge --parallel 2
       - name: Installer les dépendances de construction native
         run: python -m pip install --disable-pip-version-check -r ui/requirements.txt -r packaging/native/requirements.txt
       - name: Préparer appimagetool
