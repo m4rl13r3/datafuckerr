@@ -241,6 +241,7 @@ Une seule ambiguïté critique invalide le tuple. Elle ne peut pas être compens
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0.2.2 | Tous | Tous | Tous | Toutes | Q0 | Non qualifié pour périphérique réel | À produire |
 | 0.2.3 | Tous | Tous | Tous | Toutes | Q0 | Non qualifié pour périphérique réel | À produire |
+| 0.2.4 | Tous | Tous | Tous | Toutes | Q0 | Non qualifié pour périphérique réel | À produire |
 
 Ces lignes sont les seules autorisées tant qu’aucune campagne Q1 à Q3 n’est achevée.
 

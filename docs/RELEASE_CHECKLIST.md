@@ -270,8 +270,8 @@ Signatures :
     Date et identifiant de décision :
     Verdict : publier, refuser ou limiter au laboratoire
 
-## État de la version 0.2.3
+## État de la version 0.2.4
 
-La version 0.2.3 reste une alpha. Elle possède désormais une vérification complète par défaut, une validation stricte de full/sample, une réinspection de l’identité, un acquittement explicite et un audit chaîné vérifiable. Elle ne satisfait notamment pas les barrières P0 relatives à une revalidation liée au descripteur ouvert, à la protection Windows, à la qualification matérielle, à la reprise persistante après interruption, à l’authenticité externe de l’audit et à la chaîne de publication.
+La version 0.2.4 reste une alpha. Elle possède désormais une vérification complète par défaut, une validation stricte de full/sample, une réinspection de l’identité, un acquittement explicite et un audit chaîné vérifiable. Elle ne satisfait notamment pas les barrières P0 relatives à une revalidation liée au descripteur ouvert, à la protection Windows, à la qualification matérielle, à la reprise persistante après interruption, à l’authenticité externe de l’audit et à la chaîne de publication.
 
 Le prochain jalon honnête est une préversion de développement destinée aux fichiers virtuels. Un usage client ne devient autorisé qu’après preuve Q3 et approbation finale de cette checklist.

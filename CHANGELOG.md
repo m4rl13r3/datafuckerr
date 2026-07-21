@@ -4,6 +4,12 @@ Toutes les modifications notables de diskpurge sont consignées dans ce fichier.
 
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le projet entend suivre [Semantic Versioning](https://semver.org/lang/fr/) à partir de sa première préversion publiée.
 
+## 0.2.4 — 2026-07-21
+
+### Corrigé
+
+- Le smoke test de l’AppImage finale impose désormais le backend Qt sans affichage et ne dépend plus de l’environnement du workflow appelant.
+
 ## 0.2.3 — 2026-07-21
 
 ### Corrigé

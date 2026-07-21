@@ -229,7 +229,9 @@ def build_appimage(distribution, icon_directory, output, work, version, appimage
     environment["ARCH"] = "x86_64"
     run((str(tool), "--no-appstream", str(app_directory), str(package)), environment)
     package.chmod(0o755)
-    run((str(package), "--native-smoke-test"), environment)
+    smoke_environment = environment.copy()
+    smoke_environment["QT_QPA_PLATFORM"] = "offscreen"
+    run((str(package), "--native-smoke-test"), smoke_environment)
     return package
 
 

@@ -2,7 +2,7 @@
 
 Cette recette construit une image Debian Live amd64 avec l’interface Qt 6 et le binaire C standard. Elle vise un démarrage BIOS ou UEFI depuis une clé USB ou un média optique.
 
-L’image ne contient jamais le mode laboratoire. La table de qualification physique de la version 0.2.3 est vide : même démarré depuis l’ISO, datafuckerr refuse donc tout effacement de support physique. Les fichiers virtuels restent utilisables pour les démonstrations non destructives.
+L’image ne contient jamais le mode laboratoire. La table de qualification physique de la version 0.2.4 est vide : même démarré depuis l’ISO, datafuckerr refuse donc tout effacement de support physique. Les fichiers virtuels restent utilisables pour les démonstrations non destructives.
 
 ## Construction
 
