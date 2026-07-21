@@ -4,6 +4,12 @@ Toutes les modifications notables de diskpurge sont consignées dans ce fichier.
 
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le projet entend suivre [Semantic Versioning](https://semver.org/lang/fr/) à partir de sa première préversion publiée.
 
+## 0.2.3 — 2026-07-21
+
+### Corrigé
+
+- Les textes de licence redistribués par les applications natives sont désormais embarqués et vérifiés depuis le dépôt afin que la construction ne dépende plus d’un téléchargement réseau.
+
 ## 0.2.2 — 2026-07-21
 
 ### Corrigé

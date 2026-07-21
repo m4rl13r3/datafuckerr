@@ -2,7 +2,7 @@
 
 Suite open source d’effacement de supports de stockage. Son moteur C17 `diskpurge` fournit l’inventaire, la planification et l’exécution ; l’interface Qt 6 `datafuckerr` l’expose sur les plateformes prises en charge.
 
-> **Statut : prépublication alpha 0.2.2.** Cette version est destinée aux fichiers virtuels, aux démonstrations et au développement. N’utilisez pas `diskpurge` sur un support réel ou sur des données client avant d’avoir satisfait les critères de qualification matérielle et de publication du projet.
+> **Statut : prépublication alpha 0.2.3.** Cette version est destinée aux fichiers virtuels, aux démonstrations et au développement. N’utilisez pas `diskpurge` sur un support réel ou sur des données client avant d’avoir satisfait les critères de qualification matérielle et de publication du projet.
 
 ## Portée actuelle
 
@@ -16,7 +16,7 @@ Suite open source d’effacement de supports de stockage. Son moteur C17 `diskpu
 
 Sous Linux, le backend NVMe direct lit les capacités du contrôleur, privilégie le crypto-erase, utilise sinon le block-erase, puis suit le journal Sanitize. Cette implémentation n’est pas encore qualifiée sur une matrice de matériels sacrifiables.
 
-Le binaire standard 0.2.2 ne contient aucun tuple matériel réel qualifié : il refuse donc actuellement tout `erase` visant un disque physique. Les fichiers réguliers de test sont les seules cibles qualifiées par la table distribuée. Un build de laboratoire est marqué par le suffixe de version `-lab` et reste réservé aux supports sacrifiables isolés ; il n’est pas un binaire de production.
+Le binaire standard 0.2.3 ne contient aucun tuple matériel réel qualifié : il refuse donc actuellement tout `erase` visant un disque physique. Les fichiers réguliers de test sont les seules cibles qualifiées par la table distribuée. Un build de laboratoire est marqué par le suffixe de version `-lab` et reste réservé aux supports sacrifiables isolés ; il n’est pas un binaire de production.
 
 Le type de connecteur — USB, USB-C, SATA ou PCIe — ne garantit pas la disponibilité d’une méthode. Un pont USB peut filtrer les commandes natives, modifier l’identité exposée ou masquer les capacités du support.
 

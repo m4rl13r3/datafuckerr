@@ -2,7 +2,7 @@
 
 ## Statut du document
 
-Ce modèle couvre le code 0.2.2 présent dans la branche principale. Il doit être revu pour chaque changement de sélection du support, de commande destructive, de vérification, d’audit ou de privilèges.
+Ce modèle couvre le code 0.2.3 présent dans la branche principale. Il doit être revu pour chaque changement de sélection du support, de commande destructive, de vérification, d’audit ou de privilèges.
 
 Le logiciel est une alpha de laboratoire. Les éléments marqués « blocage production » interdisent de le présenter comme un outil d’effacement sécurisé destiné aux clients tant qu’ils ne sont pas corrigés et vérifiés.
 

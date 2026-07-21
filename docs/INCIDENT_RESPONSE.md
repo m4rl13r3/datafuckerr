@@ -4,7 +4,7 @@
 
 Cette procédure s’applique à toute opération diskpurge qui ne se termine pas par un résultat entièrement vérifié et conforme au périmètre autorisé. Elle couvre notamment une panne, une coupure d’alimentation, une perte de suivi, un disque disparu, un mauvais support suspecté et un journal incomplet ou altéré.
 
-La version 0.2.2 standard n’est pas autorisée sur les disques clients et ne contient aucun tuple matériel réel qualifié. Un incident sur support réel pendant une expérimentation reste néanmoins traité comme critique. Le mode `-lab` ne réduit ni l’obligation de confinement ni celle de conserver les preuves.
+La version 0.2.3 standard n’est pas autorisée sur les disques clients et ne contient aucun tuple matériel réel qualifié. Un incident sur support réel pendant une expérimentation reste néanmoins traité comme critique. Le mode `-lab` ne réduit ni l’obligation de confinement ni celle de conserver les preuves.
 
 ## Réflexes immédiats
 

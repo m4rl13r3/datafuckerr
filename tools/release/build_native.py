@@ -10,26 +10,21 @@ import re
 import shutil
 import subprocess
 import sys
-import urllib.request
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SPDX_COMMIT = "5bf6d9610255540bfbee6890765a616042bf1e11"
-LICENSE_SOURCES = (
+LICENSE_FILES = (
     (
         "GPL-3.0-only.txt",
-        f"https://raw.githubusercontent.com/spdx/license-list-data/{SPDX_COMMIT}/text/GPL-3.0-only.txt",
         "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0",
     ),
     (
         "LGPL-3.0-only.txt",
-        f"https://raw.githubusercontent.com/spdx/license-list-data/{SPDX_COMMIT}/text/LGPL-3.0-only.txt",
         "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
     ),
     (
         "PSF-2.0.txt",
-        f"https://raw.githubusercontent.com/spdx/license-list-data/{SPDX_COMMIT}/text/PSF-2.0.txt",
         "ab745c5061d1dea43a3885e5b4b6befc7e983954954775c5736debeefcdfd89b",
     ),
 )
@@ -132,14 +127,17 @@ def verify_binary(binary, version):
 def prepare_licenses(work):
     directory = work / "licenses"
     directory.mkdir()
-    for name, url, expected in LICENSE_SOURCES:
-        with urllib.request.urlopen(url, timeout=30) as response:
-            content = response.read(1024 * 1024)
-            if response.read(1):
-                raise SystemExit(f"Le texte de licence {name} est trop volumineux.")
+    source_directory = ROOT / "packaging" / "native" / "licenses"
+    for name, expected in LICENSE_FILES:
+        source = source_directory / name
+        if source.is_symlink() or not source.is_file():
+            raise SystemExit(f"Le texte de licence {name} est absent.")
+        content = source.read_bytes()
+        if len(content) > 1024 * 1024:
+            raise SystemExit(f"Le texte de licence {name} est trop volumineux.")
         if hashlib.sha256(content).hexdigest() != expected:
             raise SystemExit(f"La somme du texte de licence {name} est invalide.")
-        (directory / name).write_bytes(content)
+        shutil.copyfile(source, directory / name)
     for distribution_name, output_name in PACKAGE_LICENSES:
         distribution = importlib.metadata.distribution(distribution_name)
         candidates = [
