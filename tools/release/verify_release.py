@@ -125,13 +125,6 @@ def archive_files(path):
     return read_zip(path)
 
 
-def find_suffix(files, suffix):
-    matches = [name for name in files if name.endswith(suffix)]
-    if len(matches) != 1:
-        raise SystemExit(f"L’archive doit contenir exactement un fichier {suffix}.")
-    return matches[0]
-
-
 def verify_archive(path, sbom):
     files = archive_files(path)
     if not files:
@@ -139,13 +132,18 @@ def verify_archive(path, sbom):
     roots = {PurePosixPath(name).parts[0] for name in files}
     if len(roots) != 1:
         raise SystemExit("L’archive doit avoir une racine unique.")
-    for required in ("/VERSION", "/README.md", "/LICENSE", "/manifest.json"):
-        find_suffix(files, required)
-    binary_name = find_suffix(
-        files, "/diskpurge.exe" if path.suffix == ".zip" else "/diskpurge"
+    archive_root = next(iter(roots))
+    required_names = ("VERSION", "README.md", "LICENSE", "manifest.json")
+    for required_name in required_names:
+        if f"{archive_root}/{required_name}" not in files:
+            raise SystemExit(f"L’archive doit contenir {required_name} à sa racine.")
+    binary_name = (
+        f"{archive_root}/{'diskpurge.exe' if path.suffix == '.zip' else 'diskpurge'}"
     )
-    manifest_name = find_suffix(files, "/manifest.json")
-    version_name = find_suffix(files, "/VERSION")
+    if binary_name not in files:
+        raise SystemExit("Le binaire est absent de la racine de l’archive.")
+    manifest_name = f"{archive_root}/manifest.json"
+    version_name = f"{archive_root}/VERSION"
     try:
         manifest = json.loads(files[manifest_name].decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
