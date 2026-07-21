@@ -119,24 +119,6 @@ jobs:
         run: |
           cmake -S . -B native-cmake -DCMAKE_BUILD_TYPE=Release -DDISKPURGE_ENABLE_LAB_MODE=OFF
           cmake --build native-cmake --config Release --target diskpurge --parallel 2
-      - name: Valider la construction de publication Linux
-        if: runner.os == 'Linux'
-        shell: bash
-        run: |
-          set +e
-          cmake --build native-cmake --config Release --parallel 2 2>&1 | tee native-linux-build.log
-          status=${PIPESTATUS[0]}
-          set -e
-          if [[ $status -ne 0 ]]; then
-            while IFS= read -r line; do
-              escaped=${line//'%'/'%25'}
-              escaped=${escaped//$'\r'/'%0D'}
-              escaped=${escaped//$'\n'/'%0A'}
-              echo "::error::$escaped"
-            done < <(tail -n 50 native-linux-build.log)
-            exit "$status"
-          fi
-          ctest --test-dir native-cmake -C Release --output-on-failure
       - name: Installer les dépendances de construction native
         run: python -m pip install --disable-pip-version-check -r ui/requirements.txt -r packaging/native/requirements.txt
       - name: Préparer appimagetool

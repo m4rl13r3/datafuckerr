@@ -8,8 +8,8 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 ### Corrigé
 
-- La compilation Ubuntu 22.04 de Publication est limitée à deux tâches parallèles afin d’éviter l’échec du runner avant la construction de l’AppImage.
-- La CI reproduit désormais la compilation et les tests Linux complets du workflow de Publication avant la création d’un tag.
+- La construction Ubuntu 22.04 de Publication compile uniquement le moteur standard destiné à l’AppImage ; les tests Linux complets restent exécutés par les jobs CI dédiés.
+- Les compilations de Publication sont limitées à deux tâches parallèles pour stabiliser les runners.
 
 ## 0.2.1 — 2026-07-21
 
