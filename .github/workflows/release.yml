@@ -113,14 +113,14 @@ jobs:
         with:
           subject-path: native-out/*
       - name: Conserver le lot de publication
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: publication-${{ runner.os }}-${{ runner.arch }}
           path: release-out/*
           if-no-files-found: error
           retention-days: 30
       - name: Conserver l’application native
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: application-${{ runner.os }}-${{ runner.arch }}
           path: native-out/*
@@ -156,7 +156,7 @@ jobs:
         with:
           subject-path: output/iso/*
       - name: Conserver l’image amorçable
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: image-live-amd64
           path: output/iso/*
