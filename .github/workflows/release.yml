@@ -110,11 +110,11 @@ jobs:
       - name: Vérifier l’application native
         run: python tools/release/verify_native.py native-out
       - name: Attester la provenance GitHub
-        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
         with:
           subject-path: release-out/*
       - name: Attester l’application native
-        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
         with:
           subject-path: native-out/*
       - name: Conserver le lot de publication
@@ -157,7 +157,7 @@ jobs:
           cd output/iso
           sha256sum --check --strict *.iso.sha256
       - name: Attester la provenance GitHub
-        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
         with:
           subject-path: output/iso/*
       - name: Conserver l’image amorçable
